@@ -61,36 +61,63 @@ const AllClubs = () => {
                 </select>
             </div>
 
-            {/* Club Cards */}
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredClubs.map(club => (
-                    <div key={club._id} className="bg-white rounded-xl shadow hover:shadow-lg transition">
-                        <img
-                            src={club.image}
-                            alt={club.clubName}
-                            className="h-48 w-full object-cover rounded-t-xl transition"
-                        />
+         {/* Club Cards */}
+<div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+  {filteredClubs.map(club => (
+    <div
+      key={club._id}
+      className="group relative bg-white rounded-3xl shadow-lg border border-transparent hover:border-green-200 overflow-hidden transform hover:scale-105 transition-all duration-300"
+    >
+      {/* Image */}
+      <div className="relative h-52 overflow-hidden">
+        <img
+          src={club.image}
+          alt={club.clubName}
+          className="w-full h-full object-cover brightness-90 group-hover:brightness-100 transition"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 opacity-0 group-hover:opacity-50 transition"></div>
+      </div>
 
-                        <div className="p-5 space-y-2">
-                            <h2 className="text-xl font-semibold">{club.clubName}</h2>
-                            <p className="text-sm text-gray-600 line-clamp-2">{club.description}</p>
-                            <p className="text-sm font-medium">
-                                {club.membershipFee === 0 ? "✅ Free" : `💳 $${club.membershipFee}`}
-                            </p>
+      {/* Content */}
+      <div className="p-6 space-y-3">
+        <h3 className="text-2xl font-bold text-gray-800 group-hover:text-green-600 transition-colors underline-offset-2 group-hover:underline">
+          {club.clubName}
+        </h3>
 
-                            <div className="flex justify-between items-center mt-4">
-                                <span className="text-xs bg-gray-100 px-2 py-1 rounded">
-                                    {club.category}
-                                </span>
+        <p className="text-sm text-gray-600 line-clamp-3">
+          {club.description}
+        </p>
 
-                                <Link to={`/clubs/${club._id}`} className="btn btn-sm btn-secondary">
-                                    View
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
+        <div className="flex items-center justify-between">
+          <span className="text-xs uppercase font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+            {club.category}
+          </span>
+
+          <span
+            className={`text-sm font-semibold ${
+              club.membershipFee === 0
+                ? "text-green-600 bg-green-100 px-2 py-1 rounded-full"
+                : "text-yellow-700 bg-yellow-100 px-2 py-1 rounded-full"
+            }`}
+          >
+            {club.membershipFee === 0 ? "Free" : `$${club.membershipFee}`}
+          </span>
+        </div>
+
+        <Link
+          to={`/clubs/${club._id}`}
+          className="inline-block w-full text-center text-white bg-green-600 hover:bg-green-700 font-semibold py-2 rounded-xl transition transform hover:-translate-y-0.5"
+        >
+          View Details
+        </Link>
+      </div>
+
+      {/* Decorative Accent */}
+      <div className="absolute -right-6 -top-6 w-24 h-24 bg-green-200 rounded-full blur-2xl opacity-30 group-hover:opacity-50 transition"></div>
+    </div>
+  ))}
+</div>
+
         </div>
     );
 };

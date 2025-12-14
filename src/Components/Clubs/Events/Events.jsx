@@ -30,11 +30,13 @@ const Events = () => {
   const handleFreeJoin = async () => {
     try {
       await axiosSecure.patch(`/events/${selectedEvent._id}/join`);
-      setEvents(events.map(ev =>
-        ev._id === selectedEvent._id
-          ? { ...ev, maxAttendees: (ev.maxAttendees || 0) + 1 }
-          : ev
-      ));
+      setEvents(
+        events.map((ev) =>
+          ev._id === selectedEvent._id
+            ? { ...ev, maxAttendees: (ev.maxAttendees || 0) + 1 }
+            : ev
+        )
+      );
       alert("Joined Free Event 🎉");
     } catch (err) {
       console.error(err);
@@ -43,11 +45,30 @@ const Events = () => {
     setSelectedEvent(null);
   };
 
+  const handleStripePay = async () => {
+    try {
+      const paymentInfo = {
+        cost: selectedEvent.price,
+        clubId: selectedEvent._id,
+        senderEmail: selectedEvent.createdBy || "", 
+        clubName: selectedEvent.title,
+      };
+      const res = await axiosSecure.post("/create-checkout-session", paymentInfo);
+      if (res.data.url) {
+        window.location.href = res.data.url;
+      }
+    } catch (err) {
+      console.error("Stripe error:", err);
+      alert("Payment failed");
+    }
+    setSelectedEvent(null);
+  };
+
   return (
     <div className="px-4 py-8 max-w-6xl mx-auto">
       <h1 className="text-3xl font-bold mb-6 text-center">Upcoming Events</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {events.map(evt => (
+        {events.map((evt) => (
           <div key={evt._id} className="card bg-base-100 shadow-lg">
             <div className="card-body flex flex-col">
               <h2 className="card-title text-xl font-semibold">{evt.title}</h2>
@@ -103,10 +124,7 @@ const Events = () => {
                 >
                   Cancel
                 </button>
-                <button
-                  className="btn btn-primary"
-                  onClick={() => alert("Implement Stripe payment here")}
-                >
+                <button className="btn btn-secondary" onClick={handleStripePay}>
                   Pay & Join
                 </button>
               </div>
@@ -118,7 +136,7 @@ const Events = () => {
                 >
                   Cancel
                 </button>
-                <button className="btn btn-primary" onClick={handleFreeJoin}>
+                <button className="btn btn-secondary" onClick={handleFreeJoin}>
                   Join
                 </button>
               </div>

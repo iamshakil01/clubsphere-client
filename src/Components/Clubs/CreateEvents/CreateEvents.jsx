@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 const CreateEvent = ({ clubId }) => {
     const axiosSecure = useAxiosSecure();
     const [type, setType] = useState('free');
+    console.log(type, setType)
 
     const {
         register,

@@ -1,3 +1,4 @@
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useLocation } from "react-router";
@@ -29,64 +30,95 @@ const ClubsManagement = () => {
         }
     };
 
-    if (isLoading) return <Loading></Loading>;
-
+    if (isLoading) return <Loading />;
+    
     const filtered = filter ? clubs.filter(c => c.status === filter) : clubs;
 
     return (
-        <div className="p-4">
-            <h2 className="text-3xl font-bold mb-4">
-                TOTAL-CLUBS ({clubs.length}) {filter ? `– ${filter.charAt(0).toUpperCase() + filter.slice(1)}` : ""}
+        <div className="max-w-7xl mx-auto p-6 space-y-6">
+            <h2 className="text-3xl font-extrabold text-gray-800">
+                TOTAL CLUBS ({clubs.length}){" "}
+                {filter && `– ${filter.charAt(0).toUpperCase() + filter.slice(1)}`}
             </h2>
-            <table className="table-auto w-full border-collapse">
-                <thead>
-                    <tr className="bg-gray-200">
-                        <th className="border px-4 py-2 text-center">#</th>
-                        <th className="border px-4 py-2 text-center">Club Name</th>
-                        <th className="border px-4 py-2 text-center">Created By</th>
-                        <th className="border px-4 py-2 text-center">Status</th>
-                        <th className="border px-4 py-2 text-center">Membership Fee</th>
-                        <th className="border px-4 py-2 text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {filtered.map((club, idx) => {
-                        const isApproved = club.status === "approved";
-                        return (
-                            <tr
-                                key={club._id}
-                                className={isApproved ? "bg-blue-100" : ""}
-                            >
-                                <td className="border px-4 py-2 text-center">{idx + 1}</td>
-                                <td className="border px-4 py-2 text-center">{club.clubName}</td>
-                                <td className="border px-4 py-2 text-center">{club.createdBy}</td>
-                                <td className="border px-4 py-2 text-center">{club.status}</td>
-                                <td className="border px-4 py-2 text-center">{club.membershipFee}</td>
-                                <td className="border px-4 py-2 text-center">
-                                    {club.status === "pending" ? (
-                                        <>
-                                            <button
-                                                className="btn btn-sm mr-2 text-green-500"
-                                                onClick={() => handleStatusChange(club._id, "approved")}
-                                            >
-                                                Approve
-                                            </button>
-                                            <button
-                                                className="btn btn-sm btn-error"
-                                                onClick={() => handleStatusChange(club._id, "rejected")}
-                                            >
-                                                Reject
-                                            </button>
-                                        </>
-                                    ) : (
-                                        <span>—</span>
-                                    )}
-                                </td>
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
+
+            <div className="overflow-x-auto bg-white rounded-xl shadow-lg">
+                <table className="w-full table-auto border-collapse text-gray-700">
+                    <thead className="bg-indigo-600 text-white text-sm font-semibold sticky top-0">
+                        <tr>
+                            <th className="px-4 py-3">#</th>
+                            <th className="px-4 py-3">Club Name</th>
+                            <th className="px-4 py-3">Created By</th>
+                            <th className="px-4 py-3">Status</th>
+                            <th className="px-4 py-3">Membership Fee</th>
+                            <th className="px-4 py-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filtered.map((club, idx) => {
+                            const isApproved = club.status === "approved";
+                            const isRejected = club.status === "rejected";
+                            return (
+                                <tr
+                                    key={club._id}
+                                    className="border-b hover:bg-gray-50 transition-colors duration-200"
+                                >
+                                    <td className="px-4 py-3 text-center font-medium">
+                                        {idx + 1}
+                                    </td>
+
+                                    <td className="px-4 py-3 text-center">
+                                        {club.clubName}
+                                    </td>
+
+                                    <td className="px-4 py-3 text-center">
+                                        {club.createdBy}
+                                    </td>
+
+                                    <td className="px-4 py-3 text-center">
+                                        <span
+                                            className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                                                isApproved
+                                                    ? "bg-green-100 text-green-800"
+                                                    : isRejected
+                                                    ? "bg-red-100 text-red-800"
+                                                    : "bg-yellow-100 text-yellow-800"
+                                            }`}
+                                        >
+                                            {club.status.toUpperCase()}
+                                        </span>
+                                    </td>
+
+                                    <td className="px-4 py-3 text-center font-semibold text-indigo-700">
+                                        {club.membershipFee}
+                                    </td>
+
+                                    <td className="px-4 py-3 text-center space-x-2">
+                                        {club.status === "pending" ? (
+                                            <>
+                                                <button
+                                                    onClick={() => handleStatusChange(club._id, "approved")}
+                                                    className="bg-green-600 text-white px-3 py-1 rounded-lg text-sm font-semibold hover:bg-green-500 transition"
+                                                >
+                                                    Approve
+                                                </button>
+
+                                                <button
+                                                    onClick={() => handleStatusChange(club._id, "rejected")}
+                                                    className="bg-red-600 text-white px-3 py-1 rounded-lg text-sm font-semibold hover:bg-red-500 transition"
+                                                >
+                                                    Reject
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <span className="text-gray-500 text-sm">—</span>
+                                        )}
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

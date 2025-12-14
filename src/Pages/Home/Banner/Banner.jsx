@@ -16,29 +16,27 @@ const Banner = () => {
         <div className="relative">
             {/* Carousel */}
             <Carousel
-                className="h-[600px] brightness-75"
+                className="brightness-75"
                 autoPlay
                 infiniteLoop
                 showStatus={false}
                 showThumbs={false}
             >
-                <div className="h-[600px]">
-                    <img src={img1} alt="Hero 1" />
+                <div className="h-64 sm:h-80 md:h-96 lg:h-[600px]">
+                    <img src={img1} alt="Hero 1" className="w-full h-full object-cover" />
                 </div>
-                <div className="h-[600px]">
-                    <img src={img2} alt="Hero 2" />
+                <div className="h-64 sm:h-80 md:h-96 lg:h-[600px]">
+                    <img src={img2} alt="Hero 2" className="w-full h-full object-cover" />
                 </div>
-                <div className="h-[600px]">
-                    <img src={img3} alt="Hero 3" />
+                <div className="h-64 sm:h-80 md:h-96 lg:h-[600px]">
+                    <img src={img3} alt="Hero 3" className="w-full h-full object-cover" />
                 </div>
             </Carousel>
 
-            {/* Animated Overlay Content */}
             <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-white px-4">
                 
-                {/* Title, continuously bouncing */}
                 <motion.h1
-                    className="text-5xl font-bold mb-4"
+                    className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4"
                     animate={{ y: [0, -15, 0] }}
                     transition={{
                         duration: 2,
@@ -50,9 +48,8 @@ const Banner = () => {
                     Welcome to Club Sphere
                 </motion.h1>
 
-                {/* Subtitle / Description */}
                 <motion.p
-                    className="text-lg max-w-2xl mb-8"
+                    className="text-base sm:text-lg lg:text-xl max-w-2xl mb-8"
                     animate={{ y: [0, -8, 0] }}
                     transition={{
                         duration: 1.6,
@@ -61,13 +58,11 @@ const Banner = () => {
                         ease: "easeInOut"
                     }}
                 >
-                    Discover clubs, create events, connect with members,
-                    and make your community shine.
+                    Discover clubs, create events, connect with members, and make your community shine.
                 </motion.p>
-
-                {/* Buttons, gently floating too */}
+                
                 <motion.div
-                    className="space-x-4"
+                    className="space-x-0 sm:space-x-4 flex flex-col sm:flex-row gap-4"
                     animate={{ y: [0, -6, 0] }}
                     transition={{
                         duration: 1.8,
@@ -78,14 +73,14 @@ const Banner = () => {
                 >
                     <button
                         onClick={() => navigate("/all-clubs")}
-                        className="btn btn-secondary px-6 py-3 text-lg"
+                        className="btn btn-secondary px-4 py-2 sm:px-6 sm:py-3 text-base sm:text-lg"
                     >
                         Join a Club
                     </button>
 
                     <button
                         onClick={() => navigate("/create-club")}
-                        className="btn btn-secondary px-6 py-3 text-lg"
+                        className="btn btn-secondary px-4 py-2 sm:px-6 sm:py-3 text-base sm:text-lg"
                     >
                         Create a Club
                     </button>

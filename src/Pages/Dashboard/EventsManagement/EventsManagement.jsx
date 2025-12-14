@@ -19,50 +19,66 @@ const EventsManagement = ({ clubId }) => {
     });
 
     if (isLoading) return <Loading />;
-    if (isError) return <div className="text-red-500">Error: {error.message}</div>;
+    if (isError) return <div className="text-red-500 text-center text-lg font-semibold">Error: {error.message}</div>;
 
     return (
-        <div className="max-w-7xl mx-auto p-4">
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-3xl font-bold">
+        <div className="max-w-7xl mx-auto p-6 space-y-6">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                <h2 className="text-3xl font-extrabold text-gray-800">
                     {clubId ? "Club Events" : "All Events"} ({events.length})
                 </h2>
                 <button
-                    className="btn btn-secondary"
                     onClick={() => navigate("/create-events")}
+                    className="bg-indigo-600 text-white px-6 py-2 rounded-lg text-lg font-semibold hover:bg-indigo-500 transition"
                 >
                     + Create Event
                 </button>
             </div>
 
             {events.length === 0 ? (
-                <p className="text-center text-gray-600">No events found.</p>
+                <p className="text-center text-gray-600 text-lg">No events found.</p>
             ) : (
-                <div className="overflow-x-auto">
-                    <table className="table table-zebra w-full">
-                        <thead>
+                <div className="overflow-x-auto bg-white rounded-xl shadow-lg">
+                    <table className="w-full table-auto border-collapse text-gray-700">
+                        <thead className="bg-indigo-600 text-white text-sm font-semibold sticky top-0">
                             <tr>
-                                <th>#</th>
-                                <th>Title</th>
-                                <th>Description</th>
-                                <th>Date</th>
-                                <th>Location</th>
-                                <th>Paid?</th>
-                                <th>Fee</th>
-                                <th>Max Attendees</th>
+                                <th className="px-4 py-3">#</th>
+                                <th className="px-4 py-3">Title</th>
+                                <th className="px-4 py-3">Description</th>
+                                <th className="px-4 py-3">Date</th>
+                                <th className="px-4 py-3">Location</th>
+                                <th className="px-4 py-3">Paid?</th>
+                                <th className="px-4 py-3">Fee</th>
+                                <th className="px-4 py-3">Max Attendees</th>
                             </tr>
                         </thead>
+
                         <tbody>
                             {events.map((e, idx) => (
-                                <tr key={e._id}>
-                                    <td>{idx + 1}</td>
-                                    <td>{e.title}</td>
-                                    <td className="max-w-xs truncate">{e.description}</td>
-                                    <td>{new Date(e.date).toLocaleString()}</td>
-                                    <td>{e.location}</td>
-                                    <td>{e.price > 0 ? "Yes" : "No"}</td>
-                                    <td>{e.price > 0 ? `$${e.price}` : "---"}</td>
-                                    <td>{e.maxAttendees}</td>
+                                <tr
+                                    key={e._id}
+                                    className="border-b hover:bg-indigo-50 transition-colors duration-200"
+                                >
+                                    <td className="px-4 py-3 font-medium">{idx + 1}</td>
+                                    <td className="px-4 py-3">{e.title}</td>
+                                    <td className="px-4 py-3 max-w-xs truncate">{e.description}</td>
+                                    <td className="px-4 py-3">{new Date(e.date).toLocaleString()}</td>
+                                    <td className="px-4 py-3">{e.location}</td>
+                                    <td className="px-4 py-3 font-semibold text-center">
+                                        {e.price > 0 ? (
+                                            <span className="text-yellow-600">Yes</span>
+                                        ) : (
+                                            <span className="text-green-600">No</span>
+                                        )}
+                                    </td>
+                                    <td className="px-4 py-3 text-center">
+                                        {e.price > 0 ? (
+                                            <span className="font-semibold text-indigo-700">${e.price}</span>
+                                        ) : (
+                                            <span className="text-gray-500">---</span>
+                                        )}
+                                    </td>
+                                    <td className="px-4 py-3 text-center font-medium">{e.maxAttendees}</td>
                                 </tr>
                             ))}
                         </tbody>
