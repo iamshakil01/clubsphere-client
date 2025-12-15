@@ -23,7 +23,6 @@ import Events from "../Components/Clubs/Events/Events";
 import ErrorPage from "../Components/ErrorPage/ErrorPage";
 import AdminRoutes from "./AdminRoutes";
 import EventsManagement from "../Pages/Dashboard/EventsManagement/EventsManagement";
-import Membership from "../Pages/Dashboard/Membership/Membership";
 
 
 export const router = createBrowserRouter([
@@ -125,10 +124,6 @@ export const router = createBrowserRouter([
             {
                 path: 'events-management',
                 element: <EventsManagement></EventsManagement>
-            },
-            {
-                path: 'memberships-management',
-                element: <Membership></Membership>
             },
            
         ]

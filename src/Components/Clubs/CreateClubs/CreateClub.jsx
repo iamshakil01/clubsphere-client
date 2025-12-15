@@ -92,6 +92,8 @@ const CreateClub = () => {
             <option>Tech</option>
             <option>Sports</option>
             <option>Book Club</option>
+            <option>Journalism</option>
+            <option>Media</option>
           </select>
         </div>
 

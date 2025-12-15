@@ -108,9 +108,9 @@ const Navbar = () => {
                     </ul>
                 </div>
 
-                <Link to="/" className="btn btn-ghost normal-case text-2xl font-bold text-green-600">
+                <span to="/" className="btn btn-ghost normal-case text-2xl font-bold text-green-600">
                     <Logo />
-                </Link>
+                </span>
             </div>
 
             <div className="navbar-center hidden lg:flex">

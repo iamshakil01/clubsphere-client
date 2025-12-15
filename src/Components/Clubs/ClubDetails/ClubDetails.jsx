@@ -20,8 +20,6 @@ const ClubDetails = () => {
     return <Loading></Loading>;
   }
 
-
-
   const handleJoin = () => {
     Swal.fire({
       icon: "success",
@@ -32,13 +30,10 @@ const ClubDetails = () => {
     document.getElementById("join_modal").close();
   };
 
-
-
   const handleStripePay = async () => {
     const paymentInfo = {
       cost: clubs.membershipFee,
       clubId: clubs._id,
-      senderEmail: clubs.createdBy,
       clubName: clubs.clubName,
     };
 
@@ -49,106 +44,91 @@ const ClubDetails = () => {
     document.getElementById("join_modal").close();
   };
 
-
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10">
-      {/* Image */}
-      <img
-        src={clubs.image}
-        alt={clubs.clubName}
-        className="w-full h-96 object-cover rounded-xl"
-      />
+    <div className="max-w-5xl mx-auto px-6 py-12">
+      <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
+        <img
+          src={clubs.image}
+          alt={clubs.clubName}
+          className="w-full h-96 object-cover transition-transform duration-500 hover:scale-105"
+        />
+        <h1 className="absolute bottom-4 left-6 text-4xl font-extrabold text-white drop-shadow-lg">
+          {clubs.clubName}
+        </h1>
+      </div>
 
-      {/* Content */}
-      <div className="mt-6 space-y-4">
-        <h1 className="text-4xl font-bold">{clubs.clubName}</h1>
-        <p className="text-gray-600">{clubs.description}</p>
+      <div className="mt-8 bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 space-y-6">
+        <p className="text-lg text-gray-700 dark:text-gray-200 leading-relaxed">
+          {clubs.description}
+        </p>
 
-        <div className="flex gap-4 flex-wrap text-sm">
-          <span className="badge badge-outline">
+        <div className="flex flex-wrap gap-4 mt-4">
+          <span className="px-4 py-2 bg-indigo-100 text-indigo-800 font-semibold rounded-full text-sm">
             {clubs.category}
           </span>
-
-          <span className="badge badge-outline">
-            {clubs.membershipFee === 0 ? "✅ Free" : `💳 $${clubs.membershipFee}`}
+          <span className="px-4 py-2 bg-green-100 text-green-800 font-semibold rounded-full text-sm">
+            {clubs.membershipFee === 0 ? "🎉 Free" : `💳 $${clubs.membershipFee}`}
           </span>
         </div>
 
-        <div className="mt-6 flex gap-4">
+        <div className="mt-8 flex flex-wrap gap-4 items-center">
           <button
-            className="btn btn-secondary"
+            className="btn bg-indigo-600 text-white hover:bg-indigo-700 px-6 py-2 rounded-full font-semibold transition"
             onClick={() => document.getElementById("join_modal").showModal()}
           >
             Join Club
           </button>
 
-          <Link to="/all-clubs" className="btn btn-outline">
-            Back
+          <Link
+            to="/all-clubs"
+            className="text-indigo-600 font-medium hover:underline"
+          >
+            ← Back to All Clubs
           </Link>
         </div>
       </div>
 
-
       <dialog id="join_modal" className="modal">
-        <div className="modal-box">
+        <div className="modal-box space-y-4 p-6 bg-white rounded-xl shadow-2xl">
+          <h3 className="text-2xl font-bold text-center">{`Join ${clubs.clubName}`}</h3>
 
-          <h3 className="text-lg font-bold mb-3">
-            Join {clubs.clubName}
-          </h3>
-
-          <div className="space-y-2 text-sm">
+          <div className="text-sm text-gray-700 space-y-2">
             <p><strong>Category:</strong> {clubs.category}</p>
-            <p>
-              <strong>Fee:</strong>{" "}
-              {clubs.membershipFee === 0 ? "Free" : `$${clubs.membershipFee}`}
-            </p>
+            <p><strong>Fee:</strong>{" "}
+              {clubs.membershipFee === 0 ? "Free" : `$${clubs.membershipFee}`}</p>
             <p className="text-gray-500">{clubs.description}</p>
           </div>
 
-          <div className="modal-action flex flex-col gap-2">
-            {clubs.paymentStatus === "paid" ? (
-              <>
-                <button className="btn btn-success w-full" disabled>
-                  ✅ Paid
-                </button>
-
-                <button
-                  className="btn btn-outline w-full"
-                  onClick={() => document.getElementById("join_modal").close()}
-                >
-                  ❌ Close
-                </button>
-              </>
-            ) : clubs.membershipFee === 0 ? (
+          <div className="modal-action flex flex-col gap-3">
+            {clubs.membershipFee === 0 ? (
               <>
                 <button
-                  className="btn btn-secondary w-full"
+                  className="btn btn-secondary w-full rounded-full"
                   onClick={handleJoin}
                 >
-                  ✅ Confirm Join
+                  Confirm Join
                 </button>
-
                 <button
-                  className="btn btn-outline w-full"
+                  className="btn btn-outline w-full rounded-full"
                   onClick={() => document.getElementById("join_modal").close()}
                 >
-                  ❌ Close
+                  Cancel
                 </button>
               </>
             ) : (
               <>
                 <button
-                  className="btn btn-secondary w-full"
+                  className="btn btn-secondary w-full rounded-full"
                   onClick={handleStripePay}
                 >
-                  💳 Pay with Stripe
+                  Pay with Stripe
                 </button>
-
                 <button
-                  className="btn btn-outline w-full"
+                  className="btn btn-outline w-full rounded-full"
                   onClick={() => document.getElementById("join_modal").close()}
                 >
-                  ❌ Close
+                  Cancel
                 </button>
               </>
             )}
