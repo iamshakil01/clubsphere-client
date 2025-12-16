@@ -9,16 +9,15 @@ const Profile = () => {
     return (
         <div className="min-h-screen bg-gray-100 py-8 px-4">
             <div className="max-w-4xl mx-auto bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-2xl overflow-hidden">
-                
-                {/* Header */}
+
+
                 <div className="bg-green-600 text-white py-6 px-8">
                     <h1 className="text-5xl font-bold">Your Profile</h1>
                 </div>
 
-                {/* Body */}
                 <div className="flex flex-col md:flex-row md:items-start p-8 gap-10">
-                    
-                    {/* Profile Picture + Role */}
+
+
                     <div className="flex flex-col items-center md:items-start">
                         <div className="w-40 h-40 rounded-full ring-8 ring-white shadow-lg overflow-hidden">
                             <img
@@ -34,7 +33,7 @@ const Profile = () => {
 
                     {/* User Details Card */}
                     <div className="flex-1 bg-white rounded-2xl shadow-xl p-8 space-y-6">
-                        
+
                         {/* Name & Email */}
                         <div className="space-y-2">
                             <div>

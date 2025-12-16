@@ -1,146 +1,166 @@
 import React, { useEffect, useState } from "react";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import Loading from "../../Loading/Loading";
+import useAuth from "../../../Hooks/useAuth";
 
 const Events = () => {
   const axiosSecure = useAxiosSecure();
+  const { user } = useAuth()
+
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
-    async function fetchEvents() {
+    const fetchEvents = async () => {
       try {
         const res = await axiosSecure.get("/events");
         setEvents(res.data || []);
       } catch (err) {
-        console.error("Failed to fetch events", err);
-        setError("Could not load events.");
+        console.error(err);
+        setError("Could not load events");
       } finally {
         setLoading(false);
       }
-    }
+    };
     fetchEvents();
   }, [axiosSecure]);
 
   if (loading) return <Loading />;
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
+
   const handleFreeJoin = async () => {
     try {
-      await axiosSecure.patch(`/events/${selectedEvent._id}/join`);
-      setEvents(
-        events.map((ev) =>
-          ev._id === selectedEvent._id
-            ? { ...ev, maxAttendees: (ev.maxAttendees || 0) + 1 }
-            : ev
-        )
-      );
-      alert("Joined Free Event 🎉");
+      await axiosSecure.post(`/events/${selectedEvent._id}/register`);
+      alert("Registered successfully 🎉");
     } catch (err) {
-      console.error(err);
-      alert("Failed to join");
+      alert(err.response?.data?.message || "Registration failed");
     }
     setSelectedEvent(null);
   };
+
 
   const handleStripePay = async () => {
     try {
       const paymentInfo = {
         cost: selectedEvent.price,
-        clubId: selectedEvent._id,
-        senderEmail: selectedEvent.createdBy || "", 
+        clubId: selectedEvent.clubId,     
+        eventId: selectedEvent._id,        
+        senderEmail: user.email,             
         clubName: selectedEvent.title,
       };
-      const res = await axiosSecure.post("/create-checkout-session", paymentInfo);
-      if (res.data.url) {
+
+      const res = await axiosSecure.post(
+        "/create-checkout-session",
+        paymentInfo
+      );
+
+      if (res.data?.url) {
         window.location.href = res.data.url;
       }
     } catch (err) {
-      console.error("Stripe error:", err);
-      alert("Payment failed");
+      console.error(err);
+      alert(err.response?.data?.message || "Payment failed");
     }
     setSelectedEvent(null);
   };
 
   return (
     <div className="px-4 py-8 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center">Upcoming Events</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        Upcoming Events
+      </h1>
+
+      {/* EVENT CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {events.map((evt) => (
-          <div key={evt._id} className="card bg-base-100 shadow-lg">
+          <div key={evt._id} className="card bg-base-100 shadow-lg h-full">
             <div className="card-body flex flex-col">
-              <h2 className="card-title text-xl font-semibold">{evt.title}</h2>
+              <h2 className="card-title line-clamp-1">
+                {evt.title}
+              </h2>
+
               <p className="text-sm text-gray-500">
                 {new Date(evt.date).toLocaleDateString()}
               </p>
-              {evt.location && <p className="text-sm">Location: {evt.location}</p>}
+
+              {evt.location && (
+                <p className="text-sm">📍 {evt.location}</p>
+              )}
+
               {evt.description && (
-                <p className="text-sm text-gray-700 line-clamp-3 overflow-hidden text-ellipsis">
+                <p className="text-sm text-gray-600 line-clamp-3">
                   {evt.description}
                 </p>
               )}
-              <div className="mt-2">
-                {evt.price > 0 ? (
-                  <span className="badge bg-yellow-400">${evt.price}</span>
-                ) : (
-                  <span className="badge bg-green-500">Free</span>
-                )}
+
+              <div className="mt-auto flex justify-between items-center pt-3">
+                <span className="badge badge-outline">
+                  {evt.price > 0 ? `$${evt.price}` : "Free"}
+                </span>
+
+                <button
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => setSelectedEvent(evt)}
+                >
+                  Join
+                </button>
               </div>
-              <button
-                className="btn btn-secondary btn-sm mt-3"
-                onClick={() => setSelectedEvent(evt)}
-              >
-                Join Event
-              </button>
             </div>
           </div>
         ))}
       </div>
 
+      {/* MODAL */}
       {selectedEvent && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-            <h2 className="text-xl font-bold">{selectedEvent.title}</h2>
-            <p className="text-sm text-gray-600">
-              {new Date(selectedEvent.date).toLocaleDateString()}
-            </p>
-            {selectedEvent.location && (
-              <p className="text-sm">Location: {selectedEvent.location}</p>
-            )}
-            <p className="mt-2">{selectedEvent.description}</p>
-            <p className="font-semibold mt-3">
-              {selectedEvent.price > 0
-                ? `Price: $${selectedEvent.price}`
-                : "Free Event"}
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4">
+          <div className="bg-white rounded-lg w-full max-w-md p-6 space-y-4">
+
+            <div>
+              <h2 className="text-xl font-bold">
+                {selectedEvent.title}
+              </h2>
+              <p className="text-sm text-gray-500">
+                {new Date(selectedEvent.date).toLocaleDateString()}
+              </p>
+            </div>
+
+            <p className="text-gray-700">
+              {selectedEvent.description}
             </p>
 
-            {selectedEvent.price > 0 ? (
-              <div className="flex justify-end gap-2">
+            <div className="flex justify-between items-center">
+              <span className="font-semibold">
+                {selectedEvent.price > 0
+                  ? `$${selectedEvent.price}`
+                  : "Free Event"}
+              </span>
+
+              {selectedEvent.price > 0 ? (
                 <button
-                  className="btn btn-outline"
-                  onClick={() => setSelectedEvent(null)}
+                  className="btn btn-secondary"
+                  onClick={handleStripePay}
                 >
-                  Cancel
-                </button>
-                <button className="btn btn-secondary" onClick={handleStripePay}>
                   Pay & Join
                 </button>
-              </div>
-            ) : (
-              <div className="flex justify-end gap-2">
+              ) : (
                 <button
-                  className="btn btn-outline"
-                  onClick={() => setSelectedEvent(null)}
+                  className="btn btn-secondary"
+                  onClick={handleFreeJoin}
                 >
-                  Cancel
-                </button>
-                <button className="btn btn-secondary" onClick={handleFreeJoin}>
                   Join
                 </button>
-              </div>
-            )}
+              )}
+            </div>
+
+            <button
+              className="btn btn-outline w-full"
+              onClick={() => setSelectedEvent(null)}
+            >
+              Cancel
+            </button>
           </div>
         </div>
       )}

@@ -7,7 +7,7 @@ const UsersManagement = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [pendingChange, setPendingChange] = useState(null);
 
-  // Search state
+  
   const [searchText, setSearchText] = useState("");
 
   const { data: users = [], refetch, isLoading, isError, error } = useQuery({
@@ -52,7 +52,7 @@ const UsersManagement = () => {
   if (isLoading) return <div>Loading users…</div>;
   if (isError) return <div className="text-red-500">Error: {error.message}</div>;
 
-  // Filter users by search
+  
   const filteredUsers = users.filter((u) => {
     const searchLower = searchText.toLowerCase();
     const name = u.displayName?.toLowerCase() || "";
@@ -63,7 +63,7 @@ const UsersManagement = () => {
   return (
     <div className="p-5">
       
-      {/* Header + Search */}
+      
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-4xl font-bold">
           Manage Users ({filteredUsers.length})

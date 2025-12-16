@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import Loading from "../../../Components/Loading/Loading";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
-const AdminOverview = () => {
+const Admin = () => {
   const axiosSecure = useAxiosSecure();
   const { data: admin = {}, isLoading } = useQuery({
     queryKey: ["admin-overview"],
@@ -21,7 +21,6 @@ const AdminOverview = () => {
     <div>
       <h1 className="text-3xl font-bold mb-6">Admin Overview</h1>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Card component — example for Total Users */}
         <Link to="/dashboard/users-management"
           className="
                 group block bg-base-200 p-6 rounded-xl shadow-md 
@@ -73,7 +72,6 @@ const AdminOverview = () => {
           <p className="text-3xl font-bold">{admin.approvedClubs}</p>
         </Link>
 
-        {/* Optional: Total Memberships */}
         {admin.totalMemberships != null && (
           <Link to="/dashboard/memberships-management"
             className="
@@ -88,7 +86,6 @@ const AdminOverview = () => {
           </Link>
         )}
 
-        {/* Optional: Total Events */}
         {admin.totalEvents != null && (
           <Link to="/dashboard/events-management"
             className="
@@ -120,4 +117,4 @@ const AdminOverview = () => {
   );
 };
 
-export default AdminOverview;
+export default Admin;

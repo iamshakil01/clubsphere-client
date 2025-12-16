@@ -31,14 +31,15 @@ const Navbar = () => {
                     All Clubs
                 </NavLink>
             </li>
+            <li>
+                <NavLink to="/create-club" className={navLinkClass}>
+                    Create Club
+                </NavLink>
+            </li>
 
             {role === "clubManager" && (
                 <>
-                    <li>
-                        <NavLink to="/create-club" className={navLinkClass}>
-                            Create Club
-                        </NavLink>
-                    </li>
+
                     <li>
                         <NavLink to="/create-events" className={navLinkClass}>
                             Create Event

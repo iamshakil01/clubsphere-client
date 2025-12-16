@@ -5,7 +5,7 @@ import useAuth from '../Hooks/useAuth';
 
 
 const axiosSecure = axios.create({
-    baseURL: 'http://localhost:3000'
+    baseURL: 'https://club-sphere-server-seven.vercel.app'
 })
 const useAxiosSecure = () => {
     const { user, logOut } = useAuth()

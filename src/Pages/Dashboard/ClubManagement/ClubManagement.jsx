@@ -1,17 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import { useForm } from "react-hook-form";
 import { useLocation } from "react-router";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import Loading from "../../../Components/Loading/Loading";
 
 const ClubsManagement = () => {
     const axiosSecure = useAxiosSecure();
     const location = useLocation();
+    const [editingClub, setEditingClub] = useState(null);
 
-    const searchParams = new URLSearchParams(location.search);
-    const filter = searchParams.get("filter");
+    const { register, handleSubmit, reset, watch } = useForm();
+    const bannerPreview = watch("bannerImage");
 
-    const { data: clubs = [], isLoading, refetch, } = useQuery({
+    const filter = new URLSearchParams(location.search).get("filter");
+
+    
+    const {
+        data: clubs = [],
+        isLoading,
+        refetch
+    } = useQuery({
         queryKey: ["clubs"],
         queryFn: async () => {
             const res = await axiosSecure.get("/dashboard/clubs-management");
@@ -19,106 +28,186 @@ const ClubsManagement = () => {
         }
     });
 
+    
     const handleStatusChange = async (id, status) => {
         try {
-            const res = await axiosSecure.patch(`/dashboard/clubs-management/${id}/status`, { status });
+            const res = await axiosSecure.patch(
+                `/dashboard/clubs-management/${id}/status`,
+                { status }
+            );
+            if (res.data.modifiedCount > 0) refetch();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    
+    const handleDelete = async (id) => {
+        try {
+            const res = await axiosSecure.delete(
+                `/dashboard/clubs-management/${id}`
+            );
+            if (res.data.deletedCount > 0) refetch();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    
+    const openEditForm = (club) => {
+        setEditingClub(club);
+        reset({
+            clubName: club.clubName,
+            description: club.description,
+            location: club.location,
+            membershipFee: club.membershipFee,
+            category: club.category,
+            bannerImage: club.bannerImage
+        });
+    };
+
+    const onSubmit = async (data) => {
+        try {
+            if (!data.bannerImage?.trim()) delete data.bannerImage;
+
+            const res = await axiosSecure.patch(
+                `/dashboard/clubs-management/${editingClub._id}`,
+                data
+            );
+
             if (res.data.modifiedCount > 0) {
-                await refetch();
+                setEditingClub(null);
+                refetch();
             }
         } catch (err) {
-            console.error("Status update failed", err);
+            console.error(err);
         }
     };
 
     if (isLoading) return <Loading />;
-    
-    const filtered = filter ? clubs.filter(c => c.status === filter) : clubs;
+
+    const filtered = filter
+        ? clubs.filter(c => c.status === filter)
+        : clubs;
 
     return (
-        <div className="max-w-7xl mx-auto p-6 space-y-6">
-            <h2 className="text-3xl font-extrabold text-gray-800">
-                TOTAL CLUBS ({clubs.length}){" "}
-                {filter && `– ${filter.charAt(0).toUpperCase() + filter.slice(1)}`}
+        <div className="max-w-7xl mx-auto p-6">
+            <h2 className="text-2xl font-bold mb-4">
+                Total Clubs: {clubs.length}
             </h2>
 
-            <div className="overflow-x-auto bg-white rounded-xl shadow-lg">
-                <table className="w-full table-auto border-collapse text-gray-700">
-                    <thead className="bg-indigo-600 text-white text-sm font-semibold sticky top-0">
+            <div className="overflow-x-auto bg-white rounded shadow">
+                <table className="w-full text-center">
+                    <thead className="bg-indigo-600 text-white">
                         <tr>
-                            <th className="px-4 py-3">#</th>
-                            <th className="px-4 py-3">Club Name</th>
-                            <th className="px-4 py-3">Created By</th>
-                            <th className="px-4 py-3">Status</th>
-                            <th className="px-4 py-3">Membership Fee</th>
-                            <th className="px-4 py-3">Actions</th>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Creator</th>
+                            <th>Status</th>
+                            <th>Fee</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
+
                     <tbody>
-                        {filtered.map((club, idx) => {
-                            const isApproved = club.status === "approved";
-                            const isRejected = club.status === "rejected";
-                            return (
-                                <tr
-                                    key={club._id}
-                                    className="border-b hover:bg-gray-50 transition-colors duration-200"
-                                >
-                                    <td className="px-4 py-3 text-center font-medium">
-                                        {idx + 1}
-                                    </td>
+                        {filtered.map((club, i) => (
+                            <tr key={club._id} className="border-b">
+                                <td>{i + 1}</td>
+                                <td>{club.clubName}</td>
+                                <td>{club.createdBy}</td>
+                                <td>{club.status}</td>
+                                <td>{club.membershipFee}</td>
+                                <td className="space-x-1 py-2">
+                                    {club.status === "pending" && (
+                                        <>
+                                            <button
+                                                onClick={() =>
+                                                    handleStatusChange(club._id, "approved")
+                                                }
+                                                className="bg-green-600 text-white px-2 py-1 rounded"
+                                            >
+                                                Approve
+                                            </button>
+                                            <button
+                                                onClick={() =>
+                                                    handleStatusChange(club._id, "rejected")
+                                                }
+                                                className="bg-red-600 text-white px-2 py-1 rounded"
+                                            >
+                                                Reject
+                                            </button>
+                                        </>
+                                    )}
 
-                                    <td className="px-4 py-3 text-center">
-                                        {club.clubName}
-                                    </td>
+                                    <button
+                                        onClick={() => openEditForm(club)}
+                                        className="bg-yellow-500 text-white px-2 py-1 rounded"
+                                    >
+                                        Edit
+                                    </button>
 
-                                    <td className="px-4 py-3 text-center">
-                                        {club.createdBy}
-                                    </td>
-
-                                    <td className="px-4 py-3 text-center">
-                                        <span
-                                            className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                                                isApproved
-                                                    ? "bg-green-100 text-green-800"
-                                                    : isRejected
-                                                    ? "bg-red-100 text-red-800"
-                                                    : "bg-yellow-100 text-yellow-800"
-                                            }`}
-                                        >
-                                            {club.status.toUpperCase()}
-                                        </span>
-                                    </td>
-
-                                    <td className="px-4 py-3 text-center font-semibold text-indigo-700">
-                                        {club.membershipFee}
-                                    </td>
-
-                                    <td className="px-4 py-3 text-center space-x-2">
-                                        {club.status === "pending" ? (
-                                            <>
-                                                <button
-                                                    onClick={() => handleStatusChange(club._id, "approved")}
-                                                    className="bg-green-600 text-white px-3 py-1 rounded-lg text-sm font-semibold hover:bg-green-500 transition"
-                                                >
-                                                    Approve
-                                                </button>
-
-                                                <button
-                                                    onClick={() => handleStatusChange(club._id, "rejected")}
-                                                    className="bg-red-600 text-white px-3 py-1 rounded-lg text-sm font-semibold hover:bg-red-500 transition"
-                                                >
-                                                    Reject
-                                                </button>
-                                            </>
-                                        ) : (
-                                            <span className="text-gray-500 text-sm">—</span>
-                                        )}
-                                    </td>
-                                </tr>
-                            );
-                        })}
+                                    <button
+                                        onClick={() => handleDelete(club._id)}
+                                        className="bg-gray-700 text-white px-2 py-1 rounded"
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             </div>
+
+            {/* edit modal */}
+            {editingClub && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+                    <div className="bg-white p-5 rounded w-96">
+                        <h3 className="text-xl font-bold mb-3">Edit Club</h3>
+
+                        {bannerPreview && (
+                            <img
+                                src={bannerPreview}
+                                alt="preview"
+                                className="w-full h-40 object-cover rounded mb-3"
+                                onError={(e) =>
+                                (e.target.src =
+                                    "https://via.placeholder.com/600x300")
+                                }
+                            />
+                        )}
+
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+                            <input {...register("clubName")} className="input" />
+                            <input {...register("description")} className="input" />
+                            <input {...register("location")} className="input" />
+                            <input type="number" {...register("membershipFee")} className="input" />
+                            <input {...register("category")} className="input" />
+                            <input
+                                {...register("bannerImage")}
+                                placeholder="Banner Image URL"
+                                className="input"
+                            />
+
+                            <div className="flex justify-end gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setEditingClub(null)}
+                                    className="bg-gray-400 px-3 py-1 rounded text-white"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="bg-indigo-600 px-3 py-1 rounded text-white"
+                                >
+                                    Save
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

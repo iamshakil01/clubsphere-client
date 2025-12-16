@@ -122,7 +122,6 @@ const Home = () => {
             </section>
 
 
-            {/* CTA */}
             <section className="relative py-20 bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-400 text-white text-center overflow-hidden mb-5">
                 {/* Decorative Light Blobs */}
                 <div className="absolute -left-24 -top-24 w-72 h-72 bg-indigo-300 rounded-full blur-3xl opacity-30 animate-pulse"></div>

@@ -22,9 +22,7 @@ const DashboardLayout = () => {
         </div>
       </nav>
 
-
       <div className="flex flex-1 overflow-hidden">
-
         {/* SIDEBAR */}
         <aside className="flex flex-col bg-white shadow-sm w-16 lg:w-20">
           <ul className="flex flex-col items-center space-y-3 py-4">
@@ -93,7 +91,8 @@ const DashboardLayout = () => {
                     Approved Clubs
                   </span>
                 </li>
-
+                
+                {/* 
                 <li className="group relative w-full flex justify-center">
                   <NavLink
                     to="/dashboard/memberships-management"
@@ -104,7 +103,7 @@ const DashboardLayout = () => {
                   <span className="absolute left-full ml-2 top-1/2 -translate-y-1/2 rounded bg-gray-900 text-white text-sm px-2 py-1 opacity-0 group-hover:opacity-100 whitespace-nowrap">
                     Memberships
                   </span>
-                </li>
+                </li> */}
 
                 <li className="group relative w-full flex justify-center">
                   <NavLink
